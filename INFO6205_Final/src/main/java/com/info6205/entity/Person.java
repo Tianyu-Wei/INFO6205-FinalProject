@@ -198,7 +198,6 @@ public class Person {
             double random = new Random().nextDouble();
             if (random < probability) {
                 //transit to panel
-                break;
             }
         }
     }
