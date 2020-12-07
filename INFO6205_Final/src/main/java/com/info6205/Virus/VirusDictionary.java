@@ -5,7 +5,7 @@ import java.util.List;
 
 public class VirusDictionary {
 
-    private static List<Virus> virusList = new ArrayList<>();
+    private List<Virus> virusList = new ArrayList<>();
 
     public VirusDictionary() {
         Virus covid19 = new Covid19();
@@ -20,7 +20,7 @@ public class VirusDictionary {
         this.virusList = virusList;
     }
 
-    public static Virus searchVirusByName(String name) {
+    public Virus searchVirusByName(String name) {
         for (Virus virus : virusList) {
             if (virus.getName().equals(name)) {
                 return virus;

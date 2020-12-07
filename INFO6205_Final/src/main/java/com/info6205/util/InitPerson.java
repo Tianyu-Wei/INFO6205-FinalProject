@@ -24,7 +24,7 @@ public class InitPerson {
 
         PersonDictionary personDirectory = new PersonDictionary();
 
-        int width = 1000, height = 1000;
+        int width = 800, height = 800;
 
         int j = 0; // number of people go out
         for (int i = 0; i < population; i++) {
@@ -44,8 +44,10 @@ public class InitPerson {
             Person person;
             if (i < infectedNum) {
                 person = new Person(x, y, target_x, target_y, 0, true, isMasked[i], false, false);
-            } else {
+            } else if (i >= infectedNum && i < m) {
                 person = new Person(x, y, target_x, target_y, 0, false, isMasked[i], false, false);
+            } else {
+                person = new Person(x, y, target_x, target_y, 0, false, false, false, false);
             }
             personDirectory.getPersonList().add(person);
         }

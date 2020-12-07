@@ -11,6 +11,8 @@ import com.info6205.City.CityDictionary;
 import com.info6205.Virus.Virus;
 import com.info6205.Virus.VirusDictionary;
 
+import javax.swing.*;
+
 /**
  *
  * @author fengpeng
@@ -22,10 +24,29 @@ public class CityInfoJFrame extends javax.swing.JFrame {
      */
     private Virus selectedVirus;
     private City selectedCity;
+    private VirusDictionary virusDictionary;
+    private CityDictionary cityDictionary;
     public CityInfoJFrame() {
         initComponents();
+        this.virusDictionary = new VirusDictionary();
+        this.cityDictionary = new CityDictionary();
+        populateVirus();
+        populateCity();
+
         String virusName = jComboBox1.getSelectedItem().toString();
-        selectedVirus = VirusDictionary.searchVirusByName(virusName);
+        selectedVirus = virusDictionary.searchVirusByName(virusName);
+    }
+
+    public void populateVirus() {
+        for (Virus virus : virusDictionary.getVirusList()) {
+            jComboBox1.addItem(virus.getName());
+        }
+    }
+
+    public void populateCity() {
+        for (City city : cityDictionary.getCityList()) {
+            jComboBox2.addItem(city.getName());
+        }
     }
 
     /**
@@ -59,7 +80,7 @@ public class CityInfoJFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        //jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel1.setText("City: ");
 
@@ -91,7 +112,7 @@ public class CityInfoJFrame extends javax.swing.JFrame {
 
         jLabel8.setText("jLabel8");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        //jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel9.setText("Viruse: ");
 
@@ -213,7 +234,7 @@ public class CityInfoJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.out.println("View Info Clicked");
         String cityName = jComboBox2.getSelectedItem().toString();
-        selectedCity = CityDictionary.searchCityByName(cityName);
+        selectedCity = cityDictionary.searchCityByName(cityName);
 
         double density = (double)selectedCity.getPopulation() / selectedCity.getArea();
         jTextField1.setText(String.valueOf(density));
@@ -231,11 +252,16 @@ public class CityInfoJFrame extends javax.swing.JFrame {
 
         System.out.println("Simulate Clicked");
         this.setVisible(false);
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SimulateJFrame(selectedCity, selectedVirus).setVisible(true);
-            }
-        });
+        if (selectedCity == null || selectedVirus == null) {
+            JOptionPane.showMessageDialog(null, "Please select the city or virus. ");
+        } else {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    new SimulateJFrame(selectedCity, selectedVirus).setVisible(true);
+                }
+            });
+        }
+
 
     }
 

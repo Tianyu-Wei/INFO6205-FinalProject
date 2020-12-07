@@ -1,5 +1,8 @@
 package com.info6205.City;
 
+import com.info6205.entity.PersonDictionary;
+import com.info6205.util.InitPerson;
+
 public abstract class City {
     private String name;
     private double area;
@@ -12,6 +15,7 @@ public abstract class City {
     private String picURI;
     private int testingNum;
     private double rateGoOut;
+    private PersonDictionary personDirectory;
 
     public City(String name, double area, int population, int infectedNum, int popOutFlow, int popInFlow, boolean isQuarantine, double rateMasked, String picURI, int testingNum, double rateGoOut) {
         this.name = name;
@@ -25,6 +29,7 @@ public abstract class City {
         this.picURI = picURI;
         this.testingNum = testingNum;
         this.rateGoOut = rateGoOut;
+        this.personDirectory = InitPerson.getPersonDirectory(population, infectedNum, rateMasked, rateGoOut);
     }
 
     public String getName() {
@@ -116,5 +121,13 @@ public abstract class City {
 
     public void setTestingNum(int testingNum) {
         this.testingNum = testingNum;
+    }
+
+    public PersonDictionary getPersonDirectory() {
+        return personDirectory;
+    }
+
+    public void setPersonDirectory(PersonDictionary personDirectory) {
+        this.personDirectory = personDirectory;
     }
 }
