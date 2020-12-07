@@ -230,6 +230,7 @@ public class CityInfoJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         System.out.println("Simulate Clicked");
+        this.setVisible(false);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SimulateJFrame(selectedCity, selectedVirus).setVisible(true);
