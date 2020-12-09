@@ -1,5 +1,6 @@
 package com.info6205.entity;
 
+import com.info6205.interfaces.SimulateJPanel;
 import com.info6205.util.CityVariables;
 
 import java.util.Random;
@@ -17,6 +18,8 @@ public class Person {
     private boolean isQuarantine;
     private int state = State.SUSCEPTIBLE;
     private boolean isArrive;
+    private int expose_time = 0;
+    private int infect_time = 0;
 
     public interface State {
         int SUSCEPTIBLE = 1;
@@ -121,6 +124,15 @@ public class Person {
         isQuarantine = quarantine;
     }
 
+    public void beExposed(int time) {
+        state = State.EXPOSED;
+        expose_time = time;
+    }
+
+    public void beInfected(int time) {
+        state = State.INFECTIOUS;
+        infect_time = time;
+    }
 
     /*
     How does a person move to the target place, one day need to update move 8 times
@@ -171,40 +183,46 @@ public class Person {
         if (state == State.RECOVERED) {}
 
         if (state == State.SUSCEPTIBLE) {
+            double distanceRandom = new Random().nextDouble();
             for (Person person : personDictionary.getPersonList()) {
-                double randomValue = ThreadLocalRandom.current().nextDouble(0.5, 8);
+
                 if (cityVariables.getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
                     if (CityVariables.MASK_INDEX * CityVariables.R_VALUE < 1) {
                         continue;
                     }
                 }
+                float possibility = 0;
+                if(person.getState() == 1) possibility = (float) (CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(distanceRandom)/5);
 
-                double probability = CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(randomValue);
-
-                double random = new Random().nextDouble();
-                if (random < probability) {
-                    //transit to panel
-                    state = State.EXPOSED;
+                // if the random number is less than the exposed possibility, make this person to be exposed
+                float random = new Random().nextFloat();
+                if (random < possibility) {
+                    this.beExposed(SimulateJPanel.worldTime);
                     break;
                 }
             }
         }
 
-        if (state == State.EXPOSED) {
+        /*
+         * if the person is already exposed, use normal distribution to randomize the time he becomes infected
+         */
+        if(state == State.EXPOSED){
+            double distanceRandom = new Random().nextDouble();
+
             for (Person person : personDictionary.getPersonList()) {
-                double randomValue = ThreadLocalRandom.current().nextDouble(0.5, 8);
+
                 if (cityVariables.getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
                     if (CityVariables.MASK_INDEX * CityVariables.R_VALUE < 1) {
                         continue;
                     }
                 }
+                float possibility = 0;
+                if(person.getState() == 2) possibility = (float) (CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(distanceRandom) * CityVariables.EXPOSE_RATE_INFECTIOUS * 3);
 
-                double probability = CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(randomValue) * CityVariables.EXPOSE_RATE_INFECTIOUS;
-
-                double random = new Random().nextDouble();
-                if (random < probability) {
-                    //transit to panel
-                    state = State.INFECTIOUS;
+                // if the random number is less than the exposed possibility, make this person to be exposed
+                float random = new Random().nextFloat();
+                if (random < possibility) {
+                    beInfected(SimulateJPanel.worldTime);
                     break;
                 }
             }
