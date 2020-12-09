@@ -6,8 +6,8 @@ import com.info6205.util.InitPerson;
 public class Boston extends City{
     private static String name = "Boston";
     private static double area = 100;
-    private static int population = 5000;
-    private static int infectedNum = 1000;
+    private static int population = 500;
+    private static int infectedNum = 100;
     private static int popOutFlow = 100;
     private static int popInFlow = 100;
     private static boolean isQuarantine = true;
