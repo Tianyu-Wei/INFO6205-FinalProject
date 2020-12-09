@@ -11,7 +11,7 @@ public class Person {
     private double y;
     private double target_x;
     private double target_y;
-    private int hasSymptom;
+    private boolean hasSymptom;
     private boolean isInfected;
     private boolean isMasked;
     private boolean isTested;
@@ -29,7 +29,7 @@ public class Person {
         int QUARANTINED = 2;
     }
 
-    public Person(double x, double y, double target_x, double target_y, int hasSymptom, boolean isInfected, boolean isMasked, boolean isTested, boolean isQuarantine) {
+    public Person(double x, double y, double target_x, double target_y, boolean hasSymptom, boolean isInfected, boolean isMasked, boolean isTested, boolean isQuarantine) {
         this.x = x;
         this.y = y;
         this.target_x = target_x;
@@ -84,11 +84,11 @@ public class Person {
         this.target_y = target_y;
     }
 
-    public int getHasSymptom() {
+    public boolean getHasSymptom() {
         return hasSymptom;
     }
 
-    public void setHasSymptom(int hasSymptom) {
+    public void setHasSymptom(boolean hasSymptom) {
         this.hasSymptom = hasSymptom;
     }
 
@@ -183,6 +183,7 @@ public class Person {
         if (state == State.RECOVERED) {}
 
         if (state == State.SUSCEPTIBLE) {
+            this.hasSymptom = true;
             double distanceRandom = new Random().nextDouble();
             for (Person person : personDictionary.getPersonList()) {
 
