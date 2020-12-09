@@ -30,15 +30,19 @@ public class SimulateJFrame extends javax.swing.JFrame {
         jLabel7.setText(String.valueOf(selectedCity.getInfectedNum()));
 
 
-        SimulateJPanel simulateJPanel = new SimulateJPanel(selectedCity, selectedVirus);
 
-        jSplitPane1.setRightComponent(simulateJPanel);
-        Thread panelThread = new Thread(simulateJPanel);
-        panelThread.start();
 
 
         //The number of recover people
         //jLabel4.setText(String.valueOf());
+    }
+
+    public void simulateStart() {
+        SimulateJPanel simulateJPanel = new SimulateJPanel(selectedCity, selectedVirus);
+        jSplitPane1.setRightComponent(simulateJPanel);
+        simulateJPanel.run();
+        //Thread panelThread = new Thread(simulateJPanel);
+        //panelThread.run();
     }
 
     /**

@@ -43,10 +43,14 @@ public class InitPerson {
 
             Person person;
             if (i < infectedNum) {
+                //people who are infected
                 person = new Person(x, y, target_x, target_y, 0, true, isMasked[i], false, false);
+                person.setState(4);
             } else if (i >= infectedNum && i < m) {
+                //people who wear mask
                 person = new Person(x, y, target_x, target_y, 0, false, isMasked[i], false, false);
             } else {
+                //people who not wear mask
                 person = new Person(x, y, target_x, target_y, 0, false, false, false, false);
             }
             personDirectory.getPersonList().add(person);

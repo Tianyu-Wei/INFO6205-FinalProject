@@ -16,6 +16,7 @@ public class Person {
     private boolean isTested;
     private boolean isQuarantine;
     private int state = State.SUSCEPTIBLE;
+    private boolean isArrive;
 
     public interface State {
         int SUSCEPTIBLE = 1;
@@ -126,15 +127,37 @@ public class Person {
      */
     public void move() {
         // people who are at home
-        if (target_x == x && target_y == y) return;
+//        if (target_x == x && target_y == y) return;
+//
+//        // when people not arrive, keep moving
+//        double dx = target_x - x;
+//        double dy = target_y - y;
+//
+//        x += dx / 8.0;
+//        y += dy / 8.0;
+//        System.out.println("this person moved");
 
-        // when people not arrive, keep moving
-        double dx = target_x - x;
-        double dy = target_y - y;
+        if (target_x == x && target_y == y) {
+            isArrive = true;
+            return;
+        }
 
-        x += dx / 8.0;
-        y += dy / 8.0;
-        System.out.println("this person moved");
+        if (isArrive) return;
+
+        double distance = Math.sqrt(Math.pow(target_x - x, 2) + Math.pow(target_y - y, 2));
+        if (distance < 1) {
+            isArrive = true;
+            return;
+        }
+
+        double xDir = target_x - x;
+        double yDir = target_y - y;
+
+        x += xDir / distance;
+        y += yDir / distance;
+
+
+
     }
 
     public double distance(double x2, double y2) {
@@ -161,6 +184,7 @@ public class Person {
                 double random = new Random().nextDouble();
                 if (random < probability) {
                     //transit to panel
+                    state = State.EXPOSED;
                     break;
                 }
             }
@@ -180,6 +204,7 @@ public class Person {
                 double random = new Random().nextDouble();
                 if (random < probability) {
                     //transit to panel
+                    state = State.INFECTIOUS;
                     break;
                 }
             }
@@ -197,6 +222,7 @@ public class Person {
             double random = new Random().nextDouble();
             if (random < probability) {
                 //transit to panel
+                state = State.RECOVERED;
             }
         }
         move();

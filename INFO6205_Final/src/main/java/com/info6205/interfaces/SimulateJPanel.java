@@ -17,7 +17,6 @@ public class SimulateJPanel extends Panel implements Runnable{
         super();
         this.selectedCity = selectedCity;
         this.selectedVirus = selectedVirus;
-        //this.run();
     }
 
     @Override
@@ -33,9 +32,9 @@ public class SimulateJPanel extends Panel implements Runnable{
             } else if (person.getState() == Person.State.QUARANTINED) {
                 graph.setColor(Color.BLUE);
             } else if (person.getState() == Person.State.EXPOSED) {
-                graph.setColor(Color.RED);
+                graph.setColor(Color.MAGENTA);
             } else if (person.getState() == Person.State.INFECTIOUS) {
-                graph.setColor(Color.ORANGE);
+                graph.setColor(Color.RED);
             } else if (person.getState() == Person.State.RECOVERED) {
                 graph.setColor(Color.GREEN);
             }
@@ -61,6 +60,6 @@ public class SimulateJPanel extends Panel implements Runnable{
                 System.out.println(worldTime);
                 worldTime++;
             }
-        }, 0, 100);
+        }, 0, 1000);
     }
 }

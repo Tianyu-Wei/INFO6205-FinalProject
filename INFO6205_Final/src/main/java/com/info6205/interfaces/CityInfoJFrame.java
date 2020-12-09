@@ -255,9 +255,12 @@ public class CityInfoJFrame extends javax.swing.JFrame {
         if (selectedCity == null || selectedVirus == null) {
             JOptionPane.showMessageDialog(null, "Please select the city or virus. ");
         } else {
+
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    new SimulateJFrame(selectedCity, selectedVirus).setVisible(true);
+                   SimulateJFrame simulateJFrame =  new SimulateJFrame(selectedCity, selectedVirus);
+                    simulateJFrame.setVisible(true);
+                    simulateJFrame.simulateStart();
                 }
             });
         }

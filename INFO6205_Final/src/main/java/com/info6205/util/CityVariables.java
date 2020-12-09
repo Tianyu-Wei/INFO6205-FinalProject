@@ -13,7 +13,7 @@ public class CityVariables {
     public static double MASK_INDEX = 0.837;
     public static double EXPOSE_RATE_INFECTIOUS = 0.95;
 
-    public static double RECOVERED_RATE = 0.956;
+    public static double RECOVERED_RATE = 0.3;
 
     public double getSocialDistancingIndex(double distance) {
         return 1-(18.19*Math.log(distance)+43.26)/100;
