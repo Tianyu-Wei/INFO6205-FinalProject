@@ -1,10 +1,9 @@
 package com.info6205.entity;
 
-import com.info6205.interfaces.SimulateJPanel;
-import com.info6205.util.CityVariables;
+import com.info6205.City.City;
+import com.info6205.Virus.Virus;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Person {
     private double x;
@@ -18,15 +17,14 @@ public class Person {
     private boolean isQuarantine;
     private int state = State.SUSCEPTIBLE;
     private boolean isArrive;
-    private int expose_time = 0;
-    private int infect_time = 0;
 
     public interface State {
+        int RECOVERED = 0;
         int SUSCEPTIBLE = 1;
+        int QUARANTINED = 2;
         int EXPOSED = 3;
         int INFECTIOUS = 4;
-        int RECOVERED = 0;
-        int QUARANTINED = 2;
+        int DEATH = 5;
     }
 
     public Person(double x, double y, double target_x, double target_y, boolean hasSymptom, boolean isInfected, boolean isMasked, boolean isTested, boolean isQuarantine) {
@@ -39,9 +37,6 @@ public class Person {
         this.isMasked = isMasked;
         this.isTested = isTested;
         this.isQuarantine = isQuarantine;
-    }
-
-    public Person() {
     }
 
     public int getState() {
@@ -68,46 +63,6 @@ public class Person {
         this.y = y;
     }
 
-    public double getTarget_x() {
-        return target_x;
-    }
-
-    public void setTarget_x(int target_x) {
-        this.target_x = target_x;
-    }
-
-    public double getTarget_y() {
-        return target_y;
-    }
-
-    public void setTarget_y(int target_y) {
-        this.target_y = target_y;
-    }
-
-    public boolean getHasSymptom() {
-        return hasSymptom;
-    }
-
-    public void setHasSymptom(boolean hasSymptom) {
-        this.hasSymptom = hasSymptom;
-    }
-
-    public boolean isInfected() {
-        return isInfected;
-    }
-
-    public void setInfected(boolean infected) {
-        isInfected = infected;
-    }
-
-    public boolean isMasked() {
-        return isMasked;
-    }
-
-    public void setMasked(boolean masked) {
-        isMasked = masked;
-    }
-
     public boolean isTested() {
         return isTested;
     }
@@ -116,38 +71,18 @@ public class Person {
         isTested = tested;
     }
 
-    public boolean isQuarantine() {
-        return isQuarantine;
+    public boolean isArrive() {
+        return isArrive;
     }
 
-    public void setQuarantine(boolean quarantine) {
-        isQuarantine = quarantine;
-    }
-
-    public void beExposed(int time) {
-        state = State.EXPOSED;
-        expose_time = time;
-    }
-
-    public void beInfected(int time) {
-        state = State.INFECTIOUS;
-        infect_time = time;
+    public double getSocialDistancingIndex(double distance) {
+        return 1 - (18.19 * Math.log(distance) + 43.26) / 100;
     }
 
     /*
     How does a person move to the target place, one day need to update move 8 times
      */
     public void move() {
-        // people who are at home
-//        if (target_x == x && target_y == y) return;
-//
-//        // when people not arrive, keep moving
-//        double dx = target_x - x;
-//        double dy = target_y - y;
-//
-//        x += dx / 8.0;
-//        y += dy / 8.0;
-//        System.out.println("this person moved");
 
         if (target_x == x && target_y == y) {
             isArrive = true;
@@ -168,82 +103,74 @@ public class Person {
         x += xDir / distance;
         y += yDir / distance;
 
-
-
     }
 
     public double distance(double x2, double y2) {
-        return Math.sqrt(Math.pow( x- x2, 2) + Math.pow(y - y2, 2));
+        return Math.sqrt(Math.pow(x- x2, 2) + Math.pow(y - y2, 2));
     }
 
-    public void updateState() {
-        PersonDictionary personDictionary = new PersonDictionary();
-        CityVariables cityVariables = new CityVariables();
-
-        if (state == State.RECOVERED) {}
+    public void updateState(Virus selectedVirus, City selectedCity) {
+        //PersonDictionary personDictionary = PersonDictionary.getInstance();
 
         if (state == State.SUSCEPTIBLE) {
-            this.hasSymptom = true;
-            double distanceRandom = new Random().nextDouble();
-            for (Person person : personDictionary.getPersonList()) {
 
-                if (cityVariables.getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
-                    if (CityVariables.MASK_INDEX * CityVariables.R_VALUE < 1) {
+            double distanceRandom = new Random().nextDouble();
+            for (Person person : selectedCity.getPersonDirectory().getPersonList()) {
+
+                if (getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
+                    if (selectedCity.getMask_index() * selectedVirus.getR_factor() < 1) {
                         continue;
                     }
                 }
                 float possibility = 0;
-                if(person.getState() == 1) possibility = (float) (CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(distanceRandom)/5);
+                if(person.getState() == 1) possibility = (float) (selectedVirus.getINFECTIOUS_RATE() * selectedCity.getMask_index()  * getSocialDistancingIndex(distanceRandom)/2);
 
                 // if the random number is less than the exposed possibility, make this person to be exposed
                 float random = new Random().nextFloat();
                 if (random < possibility) {
-                    this.beExposed(SimulateJPanel.worldTime);
+                    this.state = State.EXPOSED;
                     break;
                 }
             }
-        }
-
-        /*
-         * if the person is already exposed, use normal distribution to randomize the time he becomes infected
-         */
-        if(state == State.EXPOSED){
+        } else if (state == State.EXPOSED) {
             double distanceRandom = new Random().nextDouble();
-
-            for (Person person : personDictionary.getPersonList()) {
-
-                if (cityVariables.getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
-                    if (CityVariables.MASK_INDEX * CityVariables.R_VALUE < 1) {
+            for (Person person : selectedCity.getPersonDirectory().getPersonList()) {
+                if (getSocialDistancingIndex(distance(person.getX(), person.getY())) < 0.25) {
+                    if (selectedCity.getMask_index()  * selectedVirus.getR_factor() < 1) {
                         continue;
                     }
                 }
+
                 float possibility = 0;
-                if(person.getState() == 2) possibility = (float) (CityVariables.INFECTIOUS_RATE * CityVariables.MASK_INDEX * cityVariables.getSocialDistancingIndex(distanceRandom) * CityVariables.EXPOSE_RATE_INFECTIOUS * 3);
+                if(person.getState() == 3) possibility = (float) (selectedVirus.getINFECTIOUS_RATE() * selectedCity.getMask_index()  * getSocialDistancingIndex(distanceRandom) * selectedVirus.getEXPOSE_RATE_INFECTIOUS() * 3);
 
                 // if the random number is less than the exposed possibility, make this person to be exposed
                 float random = new Random().nextFloat();
                 if (random < possibility) {
-                    beInfected(SimulateJPanel.worldTime);
+                    this.state = State.INFECTIOUS;
                     break;
                 }
             }
-        }
-
-        if (state == State.INFECTIOUS) {
+        } else if (state == State.INFECTIOUS) {
             float random = new Random().nextFloat();
-            if (random < CityVariables.RECOVERED_RATE) {
+            if (random < selectedVirus.getRECOVERED_RATE()) {
                 this.state = State.RECOVERED;
+            } else if (random >= selectedVirus.getRECOVERED_RATE() && random < (selectedVirus.getRECOVERED_RATE() + selectedVirus.getDEATH_RATE())) {
+                this.state = State.DEATH;
             }
-        }
 
-        if (state == State.QUARANTINED) {
-            double probability = CityVariables.RECOVERED_RATE;
+            if (isTested == true && state == State.INFECTIOUS) {
+                this.state = State.QUARANTINED;
+            }
+        } else if (state == State.QUARANTINED) {
+            double probability = selectedVirus.getRECOVERED_RATE();
             double random = new Random().nextDouble();
             if (random < probability) {
-                //transit to panel
                 state = State.RECOVERED;
             }
         }
+
+        if (state == State.RECOVERED) {}
         move();
     }
 

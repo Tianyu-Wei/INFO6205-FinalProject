@@ -2,39 +2,44 @@ package com.info6205.Virus;
 
 public abstract class Virus {
     private String name;
-    private double k_factor;
     private double r_factor;
 
-    public Virus() {
-    }
+    private double INFECTIOUS_RATE;
+    private double EXPOSE_RATE_INFECTIOUS;
+    private double RECOVERED_RATE;
+    private double DEATH_RATE;
 
-    public Virus(String name, double k_factor, double r_factor) {
+    public Virus(String name, double r_factor, double infectiousRate, double exposeRateInfectious, double recoveredRate, double DEATH_RATE) {
         this.name = name;
-        this.k_factor = k_factor;
         this.r_factor = r_factor;
+        this.INFECTIOUS_RATE = infectiousRate;
+        this.EXPOSE_RATE_INFECTIOUS = exposeRateInfectious;
+        this.RECOVERED_RATE = recoveredRate;
+        this.DEATH_RATE = DEATH_RATE;
     }
 
-    public double getK_factor() {
-        return k_factor;
-    }
-
-    public void setK_factor(double k_factor) {
-        this.k_factor = k_factor;
-    }
 
     public double getR_factor() {
         return r_factor;
-    }
-
-    public void setR_factor(double r_factor) {
-        this.r_factor = r_factor;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public double getINFECTIOUS_RATE() {
+        return INFECTIOUS_RATE;
+    }
+
+    public double getEXPOSE_RATE_INFECTIOUS() {
+        return EXPOSE_RATE_INFECTIOUS;
+    }
+
+    public double getRECOVERED_RATE() {
+        return RECOVERED_RATE;
+    }
+
+    public double getDEATH_RATE() {
+        return DEATH_RATE;
     }
 }

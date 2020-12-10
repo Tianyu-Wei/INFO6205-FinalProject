@@ -9,19 +9,27 @@ public class VirusDictionary {
 
     public VirusDictionary() {
         Virus covid19 = new Covid19();
+        Virus SARS = new SARS();
+        Virus Measles = new Measles();
+        Virus Pertussis = new Pertussis();
         virusList.add(covid19);
+        virusList.add(SARS);
+        virusList.add(Measles);
+        virusList.add(Pertussis);
     }
 
     public List<Virus> getVirusList() {
         return virusList;
     }
 
-    public void setVirusList(List<Virus> virusList) {
-        this.virusList = virusList;
+    private static VirusDictionary virusDictionary = new VirusDictionary();
+
+    public static VirusDictionary getInstance() {
+        return virusDictionary;
     }
 
-    public Virus searchVirusByName(String name) {
-        for (Virus virus : virusList) {
+    public static Virus searchVirusByName(String name) {
+        for (Virus virus : VirusDictionary.getInstance().getVirusList()) {
             if (virus.getName().equals(name)) {
                 return virus;
             }

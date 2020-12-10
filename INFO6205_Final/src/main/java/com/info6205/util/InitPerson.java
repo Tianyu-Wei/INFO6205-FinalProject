@@ -7,10 +7,11 @@ import java.util.Random;
 
 public class InitPerson {
 
-    public static PersonDictionary getPersonDirectory(int population, int infectedNum, double rateMasked, double rateGoOut) {
+    public static PersonDictionary getPersonDirectory(int population, int infectedNum, double rateMasked, double rateGoOut, double rateTesting) {
         Random random = new Random();
         int m = (int)(population * rateGoOut / 100);  // number of people go out
         int n = (int)(m * rateMasked / 100); // number of people wear mask
+        int t = (int)(population * rateTesting / 100);
 
         boolean[] isMasked = new boolean[m]; // only the people who go out will wear the mask
 
@@ -53,7 +54,17 @@ public class InitPerson {
                 //people who not wear mask
                 person = new Person(x, y, target_x, target_y, false, false, false, false, false);
             }
+            //PersonDictionary.getInstance().getPersonList().add(person);
             personDirectory.getPersonList().add(person);
+        }
+        while(t > 0) {
+            int index = random.nextInt(population);
+            //System.out.println(index);
+            while(personDirectory.getPersonList().get(index).isTested()) {
+                index = random.nextInt(population);
+            }
+            personDirectory.getPersonList().get(index).setTested(true);
+            t--;
         }
         return personDirectory;
     }
